@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:insta_login/insta_login.dart';
-
 import 'package:webview_flutter/webview_flutter.dart';
 
 class InstaView extends StatefulWidget {
@@ -13,6 +12,7 @@ class InstaView extends StatefulWidget {
     required this.instaAppSecret,
     this.javascriptChannel = 'InstaLogin',
   });
+
   final String redirectUrl, instaAppId, instaAppSecret, javascriptChannel;
   final Function(String, String, String) onComplete;
 
@@ -23,6 +23,9 @@ class InstaView extends StatefulWidget {
 class _InstaViewState extends State<InstaView> {
   late final WebViewController controller;
   final Instaservices services = Instaservices();
+
+  static const String doNotAllowURL =
+      'https://www.instagram.com/accounts/manage_access/';
 
   @override
   void initState() {
@@ -64,6 +67,9 @@ class _InstaViewState extends State<InstaView> {
               debugPrint('url change to ${change.url}');
               final url = change.url ?? '';
               debugPrint('url: $url');
+              if (url.contains(doNotAllowURL)) {
+                Navigator.of(context).pop();
+              }
               if (url.contains(widget.redirectUrl)) {
                 await onRedirectUrl(url);
               }
